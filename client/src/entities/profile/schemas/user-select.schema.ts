@@ -1,16 +1,18 @@
 import { z } from 'zod';
 
+const objectIdSchema = z
+	.string()
+	.regex(/^[0-9a-fA-F]{24}$/, 'Invalid MongoDB ObjectId');
+
 export const userSelectSchema = z.object({
-	id: z.string().uuid('Invalid user ID'),
-	name: z.string(),
-	email: z.string().email(),
-	photo: z.string().url(),
-	bio: z.string(),
+	_id: objectIdSchema,
+	name: z.string().min(1, 'Name is required'),
+	email: z.string().email('Invalid email format'),
 	role: z.enum(['user', 'admin', 'creator']),
+	photo: z.string().url('Invalid photo URL').optional(),
+	bio: z.string().optional(),
 	isVerified: z.boolean(),
-	createdAt: z.string().datetime(),
-	updatedAt: z.string().datetime(),
-	token: z.string().optional(),
+	token: z.string(),
 });
 
 export type UserSelectSchema = z.infer<typeof userSelectSchema>;

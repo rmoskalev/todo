@@ -27,7 +27,7 @@ export const {
 		>({
 			invalidatesTags: [USER_TAG],
 			query: body => ({
-				url: '/auth/register',
+				url: '/register',
 				method: 'POST',
 				body,
 			}),

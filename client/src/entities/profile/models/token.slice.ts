@@ -6,6 +6,16 @@ type State = string | null;
 
 const initialState: State = localStorage.getItem(TOKEN_KEY);
 
+const saveToken = (token: string) => {
+	localStorage.setItem(TOKEN_KEY, token);
+	return token;
+};
+
+const removeToken = () => {
+	localStorage.removeItem(TOKEN_KEY);
+	return null;
+};
+
 export const {
 	name: tokenSliceName,
 	reducer: tokenReducer,
@@ -16,34 +26,26 @@ export const {
 	selectors: {
 		selectToken: state => state,
 	},
-	reducers: {},
+	reducers: {
+		resetToken: () => removeToken(),
+	},
 	extraReducers: builder => {
 		const { loginUser, logoutUser, userSelect, registerUser } =
 			profileEndpoints;
 
-		const clearToken: Parameters<typeof builder.addCase>[1] = () => {
-			localStorage.removeItem(TOKEN_KEY);
-			return null;
-		};
+		builder.addMatcher(logoutUser.matchFulfilled, removeToken);
 
-		builder.addMatcher(logoutUser.matchFulfilled, clearToken);
-
-		builder.addMatcher(userSelect.matchRejected, clearToken);
+		builder.addMatcher(userSelect.matchRejected, state => {
+			if (!state) return null;
+			return removeToken();
+		});
 
 		builder.addMatcher(loginUser.matchFulfilled, (_, { payload }) => {
-			if (payload.token) {
-				localStorage.setItem(TOKEN_KEY, payload.token);
-				return payload.token;
-			}
-			return null;
+			return payload?.token ? saveToken(payload.token) : removeToken();
 		});
 
 		builder.addMatcher(registerUser.matchFulfilled, (_, { payload }) => {
-			if (payload.token) {
-				localStorage.setItem(TOKEN_KEY, payload.token);
-				return payload.token;
-			}
-			return null;
+			return payload?.token ? saveToken(payload.token) : removeToken();
 		});
 	},
 });

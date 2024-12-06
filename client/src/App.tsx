@@ -1,5 +1,18 @@
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
+import RegisterForm from '@features/auth/register-form';
+import Home from '@pages/home';
+
 const App = () => {
-	return <div className="text-3xl font-bold text-red-600">Hello world!</div>;
+	return (
+		<Router>
+			<Routes>
+				<Route path="/" element={<Home />} />
+
+				<Route path="/register" element={<RegisterForm />} />
+			</Routes>
+		</Router>
+	);
 };
 
 export default App;

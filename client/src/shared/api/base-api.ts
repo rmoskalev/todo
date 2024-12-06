@@ -14,7 +14,7 @@ export const baseApi = createApi({
 		},
 		prepareHeaders(headers, { getState }) {
 			const state = getState() as AppState;
-			const { token } = state;
+			const token = state.token;
 
 			if (token) {
 				headers.set('Authorization', `Bearer ${token}`);
@@ -24,6 +24,7 @@ export const baseApi = createApi({
 	}),
 	endpoints: () => ({}),
 });
+
 export const {
 	util: { resetApiState },
 } = baseApi;
